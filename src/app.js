@@ -1,6 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import 'dotenv/config';
+const express = require('express')
+const cors = require('cors')
+// const dot = require('dotenv/config')
 
 const app = express();
 
@@ -13,6 +13,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(process.env.PORT, () =>
+app.listen(3000, () =>
   console.log('Example app listening on port 3000!'),
 );
