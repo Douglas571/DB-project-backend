@@ -20,11 +20,11 @@ CREATE TABLE exercises (
     exercise_name VARCHAR(100) NOT NULL,
     repetitions INT DEFAULT 1,
     sets VARCHAR(100),
-    weight BOOLEAN,
-    duration TIME,
+    weight VARCHAR(100),
+    duration VARCHAR(100),
     description TEXT,
     exercise_type VARCHAR(50),
-    equipment_needed VARCHAR(100),
+    -- equipment_needed VARCHAR(100),
     image_url VARCHAR(255),
     muscle_group VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,6 +36,7 @@ CREATE TABLE routines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     routine_name VARCHAR(100) NOT NULL,
+    days_of_week VARCHAR(50);
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -55,12 +56,10 @@ CREATE TABLE exercise_activity (
     exercise_id INT,
     routine_id INT,
     activity_date DATE NOT NULL,
-    set INT,
-    repetitions INT,
-    weight_lifted DECIMAL(5, 2),
-    duration DECIMAL(8, 2),
+    sets VARCHAR(100),
+    weight VARCHAR(100),
+    duration VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (exercise_id) REFERENCES exercises(id),
     FOREIGN KEY (routine_id) REFERENCES routines(id)
 );
-
