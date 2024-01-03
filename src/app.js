@@ -5,6 +5,9 @@ const cors = require('cors')
 const jwt = require('jsonwebtoken');
 const mariadb = require('mariadb');
 
+const Prisma = require('@prisma/client')
+const prisma = new Prisma.PrismaClient()
+
 const app = express();
 
 const JWT_SECRET_KEY = 'your_secret_key';
@@ -57,7 +60,11 @@ async function main() {
     let res 
     
     try {
-      res = await conn.query(`CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL, password VARCHAR(255) NOT NULL);`)
+      res = await conn.query(`
+      CREATE TABLE users (
+        id INT AUTO_INCREMENT PRIMARY KEY, 
+        username VARCHAR(50) NOT NULL, password VARCHAR(255) NOT NULL, 
+        birth_date DATE, weight_kg DECIMAL(5, 2), height_cm DECIMAL(5, 2));`)
       console.log(res)
     } catch(err) {
       if (err.errno === 1050) {
@@ -70,18 +77,42 @@ async function main() {
 
   // designe a query to save user
   async function saveUser(newUser) {
-    const res = await conn.query(`INSERT INTO users (username, password)
-    VALUES ('${newUser.username}', '${newUser.password}')`)
+    // let query_1 = `INSERT INTO users (username, password`
+    // let query_2 = ` VALUES ('${newUser.username}', '${newUser.password}'`
+    // if (newUser.birth_date) {
+    //   query_1 += `, birth_date`
+    //   query_2+= `, '${newUser.birth_date}'`
+    // }
+    // if (newUser.weight_kg) {
+    //   query_1 += `, weight_kg`
+    //   query_2 += `, '${newUser.weight_kg}'`
+    // }
+    // if (newUser.height_cm) {
+    //   query_1 += `, height_cm`
+    //   query_2 += `, '${newUser.height_cm}'`
+    // }
 
-    const resUser = await conn.query(`SELECT * FROM users WHERE username='${newUser.username}'`)
-    const user = resUser[0] // TODO: make the username unique and delete the array signature.
+    // query_1 += ')'
+    // query_2 += ')'
+
+    // let query = query_1 + query_2 
+
+    // const res = await conn.query(query)
+
+    // const resUser = await conn.query(`SELECT * FROM users WHERE username='${newUser.username}'`)
+    // const user = resUser[0] // TODO: make the username unique and delete the array signature.
     
-    return { user }
+    // return { user }
+    let res = await prisma.users.create({
+      data: newUser
+    })
+
+    return res
   }
 
   const randomUser = {
     username: 'randomuser' + Date.now(),
-    password: '1234567890'
+    password: '123456789doiglas'
   }
   
   async function getUser(username) {
@@ -97,6 +128,11 @@ async function main() {
 
   let result = await createUsersTable()
 
+  let admin = await getUser('admin')
+  if (!admin) {
+    await saveUser({username: 'admin', password: 'admin', birth_date: '2024-01-02'})
+  }
+
 
   // some random tests :v
   result = await saveUser(randomUser)
@@ -105,8 +141,8 @@ async function main() {
   let user = await getUser(randomUser.username)
   console.log(user)
 
-  result = await deleteUser(randomUser.username)
-  console.log(res)
+  // result = await deleteUser(randomUser.username)
+  // console.log(res)
 
 
 
@@ -121,7 +157,9 @@ async function main() {
     }
   ];
 
-  app.get('/test', (req, res) => {
+  app.get('/test', async (req, res) => {
+    let results = await prisma.users.findMany()
+    console.log({results})
     res.json({msg: "Hello tester!"})
   })
 
