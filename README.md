@@ -1,13 +1,5 @@
-# Express JS Boilerplate
+# Database Project
 
 ## Introduction
 
-This is a minimal boilerplate for Node Express apps. It comes with Babel support, CORS enabled, `nodemon` support, and some basic linting rules set up.
-
-## Usage
-
-Follow the instructions below to get started.
-
-1. Install dependencies with `npm install`.
-2. Secondly, rename the `example.env` file to `.env` and fill in the desired port.
-3. Run `npm start` to host the application on the specified port.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam vitae condimentum tortor, sit amet porta felis. Fusce feugiat pulvinar dolor ut vehicula. Sed posuere bibendum consequat. In hac habitasse platea dictumst. Nullam fermentum convallis rutrum. Curabitur pellentesque egestas tempus. Sed eu tellus id est pulvinar sagittis id eget ipsum. In fringilla ipsum purus, eu aliquet nulla semper nec. Nunc imperdiet eget nisi vitae blandit. Vestibulum posuere libero efficitur sapien tristique congue. Phasellus vel tortor sit amet lorem semper malesuada vel vitae augue. Phasellus placerat aliquam nibh, sed commodo turpis malesuada nec. Cras sodales laoreet diam in tincidunt.
