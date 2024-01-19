@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -38,9 +38,9 @@ users_collection = db["users"]
 class UserCreate(BaseModel):
     username: str
     password: str
-    #birth_date: datetime
-    #weight_kg: float
-    #height_cm: float
+    birth_date: Optional[datetime] = None
+    weight_kg: Optional[float] = None
+    height_cm: Optional[float] = None
 
 class UserLogin(BaseModel):
     username: str
