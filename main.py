@@ -15,8 +15,21 @@ def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
 
+@app.post("/singup")
+def singin():
+    token = ''
+    user = {}
+
+    # regist the user
+    # create the token
+
+    return {"token": token, "user": user}
+
 @app.post("/singin")
 def singin():
     token = ''
+
+    # check the user
+    # create the token
 
     return {"token": token}
