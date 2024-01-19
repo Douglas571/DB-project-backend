@@ -2,6 +2,8 @@ from typing import Union
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.cors import CORSMiddleware
+
 from jose import JWSError, jwt #Encriptacion - Desencriptacion
 from datetime import datetime, timedelta
 from config import SECRET_KEY #Importamos SECRET_KEY de config.py
@@ -10,6 +12,18 @@ from bson import ObjectId
 from pydantic import BaseModel
 
 app = FastAPI()
+
+origins = [
+    "*",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -72,16 +86,21 @@ def singup(user_data: UserCreate):
         raise HTTPException(status_code=400, detail="Username already registered")
     
     # Crear un nuevo usuario en la base de datos
+    
     user_data_dict = user_data.model_dump()
     #user_data_dict["password"] = hash_password(user_data_dict["password"])  # Recuerda implementar la función hash_password
+    
+
 
     result = users_collection.insert_one(user_data_dict)
 
     # Obtener el nuevo usuario creado
-    new_user = users_collection.find_one({"_id": result.inserted_id})
+    new_user = users_collection.find_one({"_id": result.inserted_id}, {'_id': 0})
+   
 
     # Crear el token para el nuevo usuario
-    token = create_token(data={"sub": str(new_user["_id"])})
+    token = create_token(data={"sub": str(new_user["username"])})
+
     #user = {}
     #token = create_token(data=user)
     #user = {"username": "example_user", "email": "user@example.com"}
