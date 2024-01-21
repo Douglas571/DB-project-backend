@@ -59,21 +59,20 @@ class Routine(BaseModel):
     exercises: List[Exercise]
 
 class ExerciseActivity(BaseModel):
-    sets: int
-    reps: int
+    sets: Optional[int]
+    reps: Optional[int]
     weight: Optional[float]
     duration: Optional[int]
 
 class Exercise(BaseModel):
     title: str
-    description: str
-    img: str
-    sets: int
-    reps: int
+    description: Optional[str]
+    img: Optional[str]
+    sets: Optional[int]
+    reps: Optional[int]
     duration: Optional[int]
-    activity: ExerciseActivity
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
 @app.get("/")
 def read_root():
