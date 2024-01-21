@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -33,6 +33,7 @@ DATABASE_URL = "mongodb://localhost:27017"
 client = MongoClient(DATABASE_URL)
 db = client["appdb"]
 users_collection = db["users"]
+routines_collection = db["routines"]
 
 # Modelos de datos
 class UserCreate(BaseModel):
@@ -45,6 +46,34 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class Exercise(BaseModel):
+    created_at: datetime
+    updated_at: datetime
+
+class Routine(BaseModel):
+    user_id: str
+    title: str
+    description: str
+    img: str
+    exercises: List[Exercise]
+
+class ExerciseActivity(BaseModel):
+    sets: int
+    reps: int
+    weight: Optional[float]
+    duration: Optional[int]
+
+class Exercise(BaseModel):
+    title: str
+    description: str
+    img: str
+    sets: int
+    reps: int
+    duration: Optional[int]
+    activity: ExerciseActivity
+    created_at: datetime
+    updated_at: datetime
 
 @app.get("/")
 def read_root():
@@ -138,7 +167,49 @@ def protected_route(token: str = Depends(OAuth2PasswordBearer(tokenUrl="signin")
 #def hash_password(password: str):
 #    return password
 
+# Endpoint para obtener rutinas
+@app.get("/routines/{routine_id}", response_model=List[Routine])
+def get_routines():
+    routines = list(routines_collection.find())
+    return routines
 
+# Endpoint para guardar rutinas
+@app.post("/routines/", response_model=Routine)
+def save_routie(routine: Routine):
+    routine_dict = routine.model_dump()
+    routine_dict["created_at"] = datetime.utcnow()
+    routine_dict["updated_at"] = datetime.utcnow()
+    result = routines_collection.insert_one(routine_dict)
+    return routine_dict
+
+# Endpoint para obtener ejercicios de una rutina
+@app.get("/routines/{routine_id}/exercises/", response_model=List[Exercise])
+def get_excercises(routine_id: str):
+    routine = routines_collection.find_one({"_id": routine_id}, {'_id': 0})
+    if not routine:
+        raise HTTPException(status_code=404, detail="Routine not found")
+    
+    exercises = routine.get("exercises", [])
+    return exercises
+
+# Endpoint para guardar ejercicios en una rutina
+@app.post("/routines/{routine_id}/exercises/", response_model=Exercise)
+def save_excercise(routine_id: str, exercise: Exercise):
+    exercise_dict = exercise.dict()
+    exercise_dict["created_at"] = datetime.utcnow()
+    exercise_dict["updated_at"] = datetime.utcnow()
+
+    result = routines_collection.update_one(
+        {"_id": routine_id},
+        {"$push": {"exercises": exercise_dict}}
+    )
+
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Routine not found")
+
+    return exercise_dict
+
+"""
 @app.post("/routines")
 def save_routine():
     pass 
@@ -155,3 +226,4 @@ def save_exercise():
 @app.get("/routines/{routine_id}/exercises/{exercise_id}")
 def save_exercise():
     pass
+"""
