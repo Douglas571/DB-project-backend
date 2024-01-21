@@ -78,6 +78,9 @@ def decode_token(token: str):
     except JWSError:
         raise credentials_exception
 
+
+# --- APP ROUTING --- #
+
 @app.post("/singup")
 def singup(user_data: UserCreate):
     # Verificar si el usuario ya existe
@@ -99,7 +102,7 @@ def singup(user_data: UserCreate):
    
 
     # Crear el token para el nuevo usuario
-    token = create_token(data={"sub": str(new_user["username"])})
+    token = create_token(data={"sub": new_user["username"]})
 
     #user = {}
     #token = create_token(data=user)
@@ -125,9 +128,9 @@ def singin(user_data: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     # Crear el token para el usuario autenticado
-    token = create_token(data={"sub": str(existing_user["username"])})
+    token = create_token(data={"sub": existing_user["username"]})
 
-    return {"token": token, "user": existing_user}
+    return {"token": token, "user": existing_user }
 
 # Ruta protegida que requiere un token válido para acceder
 @app.get("/protected")
