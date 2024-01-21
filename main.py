@@ -120,14 +120,14 @@ def singin(user_data: UserLogin):
     # create the token
 
     # Verificar si el usuario existe
-    existing_user = users_collection.find_one({"username": user_data.username})
+    existing_user = users_collection.find_one({"username": user_data.username}, {'_id': 0})
     if not existing_user or existing_user["password"] != user_data.password: #hash_password(user_data.password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     # Crear el token para el usuario autenticado
-    token = create_token(data={"sub": str(existing_user["_id"])})
+    token = create_token(data={"sub": str(existing_user["username"])})
 
-    return {"token": token}
+    return {"token": token, "user": existing_user}
 
 # Ruta protegida que requiere un token válido para acceder
 @app.get("/protected")
@@ -137,3 +137,21 @@ def protected_route(token: str = Depends(OAuth2PasswordBearer(tokenUrl="signin")
 
 #def hash_password(password: str):
 #    return password
+
+
+@app.post("/routines")
+def save_routine():
+    pass 
+
+@app.get("/routines/{routine_id}")
+def get_routine():
+    # I should pass and id and it should return my routine
+    pass
+
+@app.post("/routines/{routine_id}/exercises/")
+def save_exercise():
+    pass
+
+@app.get("/routines/{routine_id}/exercises/{exercise_id}")
+def save_exercise():
+    pass
