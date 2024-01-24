@@ -54,17 +54,15 @@ class ExerciseSets(BaseModel):
     amount: float
 
 class Exercise(BaseModel):
-    id: Optional[str]
     name: str
-    description: Optional[str]
-    img: Optional[str]
+    description: Optional[str] = None
+    img: Optional[str] = None
     unit: str
     sets: List[ExerciseSets]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 class Routine(BaseModel):
-    id: Optional[str]
     user_id: str
     title: str
     # description: str
@@ -173,9 +171,9 @@ def protected_route(token: str = Depends(OAuth2PasswordBearer(tokenUrl="signin")
 #    return password
 
 # Endpoint para obtener rutinas
-@app.get("/routines/", response_model=List[Routine])
+@app.get("/routines/")
 def get_routines():
-    routines = list(routines_collection.find())
+    routines = list(routines_collection.find({}, {"_id": 0}))
     print(routines)
     return routines
 
@@ -216,7 +214,7 @@ def save_excercise(routine_id: str, exercise: Exercise):
     exercise_dict["updated_at"] = datetime.utcnow()
 
     result = routines_collection.update_one(
-        {"_id": routine_id},
+        {"id": routine_id},
         {"$push": {"exercises": exercise_dict}}
     )
 
