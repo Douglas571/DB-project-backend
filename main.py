@@ -220,8 +220,11 @@ def save_excercise(routine_id: str, exercise: Exercise):
 
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Routine not found")
+    
+    routine = routines_collection.find_one({"id": routine_id}, {"_id": 0})
 
-    return exercise_dict
+
+    return { "exercise": exercise_dict, "routine": routine}
 
 
 
