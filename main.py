@@ -36,6 +36,7 @@ client = MongoClient(DATABASE_URL)
 db = client["appdb"]
 users_collection = db["users"]
 routines_collection = db["routines"]
+activities_collection = db["activities"]
 
 # Modelos de datos
 class UserCreate(BaseModel):
@@ -68,12 +69,6 @@ class Routine(BaseModel):
     # description: str
     # img: str
     # exercises: List[Exercise]
-
-class ExerciseActivity(BaseModel):
-    sets: Optional[int]
-    reps: Optional[int]
-    weight: Optional[float]
-    duration: Optional[int]
 
 @app.get("/")
 def read_root():
@@ -208,8 +203,9 @@ def get_excercises(routine_id: str):
 # Endpoint para guardar ejercicios en una rutina
 @app.post("/routines/{routine_id}/exercises/")
 def save_excercise(routine_id: str, exercise: Exercise):
-    print('here')
+    
     exercise_dict = exercise.dict()
+    exercise_dict["id"] = str(uuid.uuid1())
     exercise_dict["created_at"] = datetime.utcnow()
     exercise_dict["updated_at"] = datetime.utcnow()
 
@@ -227,7 +223,31 @@ def save_excercise(routine_id: str, exercise: Exercise):
     return { "exercise": exercise_dict, "routine": routine}
 
 
+class ActivitySet(BaseModel):
+    reps: int
+    amount: int
 
+class ExerciseActivity(BaseModel):
+    routine_id: str
+    exercise_id: str
+    date: datetime
+    sets: List[ActivitySet]
+
+
+@app.post("/activities")
+def save_activities(activity: ExerciseActivity):
+    activity_dict = activity.dict()
+    activity_dict['id'] = str(uuid.uuid1())
+    result = activities_collection.insert_one(activity_dict)
+
+    activities = list(activities_collection.find({}, {"_id": 0}))
+
+    return activities
+
+@app.get("/activities")
+def get_activities():
+    activities = list(activities_collection.find({}, {"_id": 0}))
+    return activities
 
 """
 @app.post("/routines")
