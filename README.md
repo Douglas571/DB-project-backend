@@ -1,23 +1,37 @@
-# Database Project
+# Planificador de Rutinas de Ejercicio
 
-## Introduction
+Aplicación Web para el manejo de rutinas y ejercicios. Proyecto académico para la asignatura "Sistemas Avanzados de Bases de Datos".
+[Video Explicativo](https://www.youtube.com/watch?v=u0FJ0NSiQzg&feature=youtu.be) disponible en youtube.
 
-Aplicación Web para el manejo de rutinas y ejercicios. Proyecto académico para la asignatura "Sistemas Avanzados de Bases de Datos". Desarrollado por Douglas Socorro, Benjamín Alastre y Jorge Maldonado. Estudiantes del 8vo Semestre de Ingeniería de Sistemas.
+## Integrantes:
 
-## Instalando las librerías necesarias
+- Douglas Socorro 29.748.656
+- Benjamín Alastre 29.712.778
+- Jorge Maldonado 29.641.202
 
-`pip install uvicorn`
+### Instalación
 
-## Inciando el servidor
+```
+pip install -r requirements.txt
+```
 
-`uvicorn main:app --reload`
+### Inciando el servidor
 
-## Para desarrolladores: Uso de entorno virtual.
+```
+uvicorn main:app --reload
+```
+
+### Para desarrolladores: Uso de entorno virtual.
 
 Utilizando cmd, para activar el entorno virtual:
 
-`env\Scripts\activate.bat`
+```
+env\Scripts\activate.bat
+```
 
 Para desactivarlo:
 
-`env\Scripts\deactivate.bat`
+```
+env\Scripts\deactivate.bat
+
+```

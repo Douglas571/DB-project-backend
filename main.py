@@ -172,6 +172,12 @@ def get_routines():
     print(routines)
     return routines
 
+@app.delete("/routines/{routine_id}")
+def delete_routine(routine_id: str):
+    res = routines_collection.delete_one({"id": routine_id})
+    routines = list(routines_collection.find({}, {"_id": 0}))
+    return routines
+
 # Endpoint para guardar rutinas
 @app.post("/routines/")
 def save_routie(routine: Routine):
@@ -247,6 +253,14 @@ def save_activities(activity: ExerciseActivity):
 @app.get("/activities")
 def get_activities():
     activities = list(activities_collection.find({}, {"_id": 0}))
+    return activities
+
+@app.delete("/activities/{activity_id}")
+def delete_activity(activity_id: str):
+    
+    result = activities_collection.delete_one({ "id": activity_id })
+    activities = list(activities_collection.find({}, {"_id": 0}))
+
     return activities
 
 """
